@@ -1,3 +1,4 @@
+import json
 class Client:
     def __init__(self, client_id: int, last_name: str, first_name: str, passport_data: str, phone_number: str):
         self.client_id = client_id
@@ -72,3 +73,36 @@ class Client:
     @phone_number.setter
     def phone_number(self, value: str):
         self.__phone_number = self._validate_phone(value)
+
+
+    @classmethod
+    def from_json(cls, json_string: str):
+        """Создает объект Client из JSON-строки."""
+        try:
+            data = json.loads(json_string)
+            return cls(
+                client_id=data["client_id"],
+                last_name=data["last_name"],
+                first_name=data["first_name"],
+                passport_data=data["passport_data"],
+                phone_number=data["phone_number"]
+            )
+        except KeyError as e:
+            raise ValueError(f"В JSON отсутствует необходимое поле: {e}")
+        except json.JSONDecodeError:
+            raise ValueError("Передана некорректная JSON-строка.")
+
+    @classmethod
+    def from_string(cls, data_string: str, delimiter: str = ","):
+        """Создает объект Client из строки, разделенной запятыми."""
+        parts = data_string.split(delimiter)
+        if len(parts) != 5:
+            raise ValueError("Строка должна содержать ровно 5 элементов.")
+        
+        return cls(
+            client_id=int(parts[0].strip()),
+            last_name=parts[1].strip(),
+            first_name=parts[2].strip(),
+            passport_data=parts[3].strip(),
+            phone_number=parts[4].strip()
+        )
