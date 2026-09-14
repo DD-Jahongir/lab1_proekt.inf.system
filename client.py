@@ -1,4 +1,53 @@
 import json
+
+class ClientShort:
+    def __init__(self, last_name: str, initials: str, phone_number: str):
+        self.last_name = last_name
+        self.initials = initials
+        self.phone_number = phone_number
+
+
+    @staticmethod
+    def _validate_string(value: str, field_name: str) -> str:
+        if not isinstance(value, str) or not value.strip():
+            raise ValueError(f"Поле '{field_name}' не может быть пустым.")
+        return value.strip()
+
+    @staticmethod
+    def _validate_phone(value: str) -> str:
+        if not isinstance(value, str):
+            raise ValueError("Телефон должен передаваться как строка.")
+        digits_only = ''.join(filter(str.isdigit, value))
+        if len(digits_only) != 10:
+            raise ValueError(f"Номер телефона должен состоять ровно из 10 цифр. Введено цифр: {len(digits_only)}")
+        return digits_only
+
+
+    @property
+    def last_name(self) -> str:
+        return self.__last_name
+
+    @last_name.setter
+    def last_name(self, value: str):
+        self.__last_name = self._validate_string(value, "Фамилия")
+
+    @property
+    def initials(self) -> str:
+        return self.__initials
+
+    @initials.setter
+    def initials(self, value: str):
+        self.__initials = self._validate_string(value, "Инициалы")
+
+    @property
+    def phone_number(self) -> str:
+        return self.__phone_number
+
+    @phone_number.setter
+    def phone_number(self, value: str):
+        self.__phone_number = self._validate_phone(value)
+
+
 class Client:
     def __init__(self, client_id: int, last_name: str, first_name: str, passport_data: str, phone_number: str):
         self.client_id = client_id
@@ -106,3 +155,16 @@ class Client:
             passport_data=parts[3].strip(),
             phone_number=parts[4].strip()
         )
+
+
+    def __str__(self) -> str:
+        return (f"Клиент #{self.client_id}: {self.last_name} {self.first_name}, "
+                f"Паспорт: {self.passport_data}, Тел: {self.phone_number}")
+
+    def get_short_info(self) -> str:
+        return f"{self.last_name} {self.first_name[0]}., Тел: {self.phone_number}"
+
+    def __eq__(self, other) -> bool:
+        if not isinstance(other, Client):
+            return False
+        return self.passport_data == other.passport_data
