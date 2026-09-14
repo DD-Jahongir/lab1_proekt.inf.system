@@ -6,6 +6,7 @@ class Client:
         self.passport_data = passport_data
         self.phone_number = phone_number
 
+
     @staticmethod
     def _validate_client_id(value: int) -> int:
         if not isinstance(value, int) or value <= 0:
@@ -13,28 +14,24 @@ class Client:
         return value
 
     @staticmethod
-    def _validate_last_name(value: str) -> str:
+    def _validate_string(value: str, field_name: str) -> str:
         if not isinstance(value, str) or not value.strip():
-            raise ValueError("Фамилия не может быть пустой.")
-        return value.strip()
-
-    @staticmethod
-    def _validate_first_name(value: str) -> str:
-        if not isinstance(value, str) or not value.strip():
-            raise ValueError("Имя не может быть пустым.")
-        return value.strip()
-
-    @staticmethod
-    def _validate_passport(value: str) -> str:
-        if not isinstance(value, str) or not value.strip():
-            raise ValueError("Паспортные данные не могут быть пустыми.")
+            raise ValueError(f"Поле '{field_name}' не может быть пустым.")
         return value.strip()
 
     @staticmethod
     def _validate_phone(value: str) -> str:
-        if not isinstance(value, str) or not value.strip():
-            raise ValueError("Номер телефона не может быть пустым.")
-        return value.strip()
+        
+        if not isinstance(value, str):
+            raise ValueError("Телефон должен передаваться как строка.")
+        
+        digits_only = ''.join(filter(str.isdigit, value))
+        
+        if len(digits_only) != 10:
+            raise ValueError(f"Номер телефона должен состоять ровно из 10 цифр. Введено цифр: {len(digits_only)}")
+        
+        return digits_only
+
 
     @property
     def client_id(self) -> int:
@@ -50,7 +47,7 @@ class Client:
 
     @last_name.setter
     def last_name(self, value: str):
-        self.__last_name = self._validate_last_name(value)
+        self.__last_name = self._validate_string(value, "Фамилия")
 
     @property
     def first_name(self) -> str:
@@ -58,7 +55,7 @@ class Client:
 
     @first_name.setter
     def first_name(self, value: str):
-        self.__first_name = self._validate_first_name(value)
+        self.__first_name = self._validate_string(value, "Имя")
 
     @property
     def passport_data(self) -> str:
@@ -66,7 +63,7 @@ class Client:
 
     @passport_data.setter
     def passport_data(self, value: str):
-        self.__passport_data = self._validate_passport(value)
+        self.__passport_data = self._validate_string(value, "Паспортные данные")
 
     @property
     def phone_number(self) -> str:
