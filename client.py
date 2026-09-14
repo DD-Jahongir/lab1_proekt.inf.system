@@ -18,7 +18,7 @@ class ClientShort:
         if not isinstance(value, str):
             raise ValueError("Телефон должен передаваться как строка.")
         digits_only = ''.join(filter(str.isdigit, value))
-        if len(digits_only) != 10:
+        if len(digits_only) != 11:
             raise ValueError(f"Номер телефона должен состоять ровно из 10 цифр. Введено цифр: {len(digits_only)}")
         return digits_only
 
@@ -50,11 +50,13 @@ class ClientShort:
 
 class Client(ClientShort):
     def __init__(self, client_id: int, last_name: str, first_name: str, passport_data: str, phone_number: str):
-        initials = f"{first_name[0]}."
+        checked_first_name = self._validate_string(first_name, "Имя")
+        
+        initials = f"{checked_first_name[0]}."
         super().__init__(last_name=last_name, initials=initials, phone_number=phone_number)
 
         self.client_id = client_id
-        self.first_name = first_name
+        self.first_name = checked_first_name 
         self.passport_data = passport_data
 
 
@@ -134,3 +136,21 @@ class Client(ClientShort):
         if not isinstance(other, Client):
             return False
         return self.passport_data == other.passport_data
+
+
+if __name__ == "__main__":
+    client1 = Client(1, "Иванов", "Иван", "1234 567890", "+7 (999) 123-45-67")
+    client2 = Client(2, "Петров", "Иван", "1234 567890", "8-900-000-00-00") # Тот же паспорт
+    
+    print(client1)
+    print("Кратко:", client1.get_short_info())
+    
+    print("Сравнение (одинаковый паспорт):", client1 == client2)
+
+    print("Из JSON:", Client.from_json('{"client_id": 3, "last_name": "Попова", "first_name": "Анна", "passport_data": "555 666", "phone_number": "89223334455"}'))
+    print("Из строки:", Client.from_string("4, Кузнецов, Дмитрий, 999 000, 89556667788"))
+
+    try:
+        Client(-1, "Сидоров", "", "123", "999")
+    except ValueError as e:
+        print("Ошибка валидации перехвачена:", e)
