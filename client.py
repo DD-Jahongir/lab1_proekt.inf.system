@@ -1,4 +1,5 @@
 import json
+import re
 
 class ClientShort:
     def __init__(self, last_name: str, initials: str, phone_number: str):
@@ -29,7 +30,8 @@ class Client:
                     raise ValueError("Передана некорректная JSON-строка.")
             
             else:
-                parts = data_string.split(",")
+                normalized_string = data_string.replace(".", ",").replace(";", ",")
+                parts = normalized_string.split(",")
                 if len(parts) != 5:
                     raise ValueError("Строка должна содержать ровно 5 элементов.")
                 
@@ -58,16 +60,36 @@ class Client:
     def _validate_string(value: str, field_name: str) -> str:
         if not isinstance(value, str) or not value.strip():
             raise ValueError(f"Поле '{field_name}' не может быть пустым.")
-        return value.strip()
+        
+        value = value.strip()
+        # Разрешаем только кириллицу, латиницу, дефисы (для двойных имен) и пробелы
+        if not re.fullmatch(r"[А-Яа-яЁёA-Za-z\-\s]+", value):
+            raise ValueError(f"Поле '{field_name}' содержит недопустимые символы (ожидаются только буквы).")
+        
+        return value.title()
+
+    @staticmethod
+    def _validate_passport(value: str) -> str:
+        if not isinstance(value, str) or not value.strip():
+            raise ValueError("Паспортные данные не могут быть пустыми.")
+        
+        value = value.strip()
+        if not re.fullmatch(r"\d{4}\s\d{6}", value):
+            raise ValueError("Паспорт должен быть в формате 'XXXX XXXXXX' (серия и номер через пробел).")
+        
+        return value
 
     @staticmethod
     def _validate_phone(value: str) -> str:
-        if not isinstance(value, str):
+        if not isinstance(value, str) or not value.strip():
             raise ValueError("Телефон должен передаваться как строка.")
-        digits_only = ''.join(filter(str.isdigit, value))
-        if len(digits_only) != 10:
-            raise ValueError(f"Номер телефона должен состоять ровно из 10 цифр. Введено цифр: {len(digits_only)}")
-        return digits_only
+        
+        cleaned = re.sub(r"[\s\-\(\)\+]", "", value)
+        
+        if not re.fullmatch(r"(7|8)?\d{10}", cleaned):
+            raise ValueError(f"Некорректный формат телефона: {value}")
+        
+        return cleaned[-10:]
 
     @staticmethod
     def _validate_client_id(value: int) -> int:
@@ -105,7 +127,7 @@ class Client:
 
     @passport_data.setter
     def passport_data(self, value: str):
-        self.__passport_data = self._validate_string(value, "Паспортные данные")
+        self.__passport_data = self._validate_passport(value)
 
     @property
     def phone_number(self) -> str:
@@ -129,11 +151,11 @@ if __name__ == "__main__":
     client1 = Client(1, "Иванов", "Иван", "1234 567890", "(999) 123-45-67")
     print("Стандартное создание:", client1)
     
-    json_data = '{"client_id": 3, "last_name": "Попова", "first_name": "Анна", "passport_data": "555 666", "phone_number": "9223334455"}'
+    json_data = '{"client_id": 3, "last_name": "Попова", "first_name": "Анна", "passport_data": "5555 666666", "phone_number": "9223334455"}'
     client_json = Client(json_data)
     print("Создание из JSON:", client_json)
     
-    csv_data = "4, Кузнецов, Дмитрий, 999 000, 9556667788"
+    csv_data = "4, Кузнецов, Дмитрий, 9999 000000, 9556667788"
     client_csv = Client(csv_data)
     print("Создание из строки:", client_csv)
     
