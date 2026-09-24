@@ -51,18 +51,12 @@ class Client:
         else:
             raise ValueError("Неверное количество аргументов. Ожидается либо 1 строка, либо 5 параметров.")
 
-    @property
-    def short_version(self) -> ClientShort:
-        initials = f"{self.first_name[0]}."
-        return ClientShort(self.last_name, initials, self.phone_number)
-
     @staticmethod
     def _validate_string(value: str, field_name: str) -> str:
         if not isinstance(value, str) or not value.strip():
             raise ValueError(f"Поле '{field_name}' не может быть пустым.")
         
         value = value.strip()
-        # Разрешаем только кириллицу, латиницу, дефисы (для двойных имен) и пробелы
         if not re.fullmatch(r"[А-Яа-яЁёA-Za-z\-\s]+", value):
             raise ValueError(f"Поле '{field_name}' содержит недопустимые символы (ожидаются только буквы).")
         
@@ -147,6 +141,11 @@ class Client:
         return self.passport_data == other.passport_data
 
 
+class ClientMapper:
+    @staticmethod
+    def short_version(client) -> ClientShort:
+            return ClientShort(client.last_name, f"{client.first_name[0]}.", client.phone_number)
+
 if __name__ == "__main__":
     client1 = Client(1, "Иванов", "Иван", "1234 567890", "(999) 123-45-67")
     print("Стандартное создание:", client1)
@@ -159,6 +158,13 @@ if __name__ == "__main__":
     client_csv = Client(csv_data)
     print("Создание из строки:", client_csv)
     
-    print("\nКраткая версия Кузнецова:", client_csv.short_version)
-    client_csv.first_name = "Алексей"
-    print("Краткая версия Кузнецова после смены имени:", client_csv.short_version)
+
+
+
+
+    client3 = Client(6, "ASSD", "asdsf", "1564 984695", "(996) 123-45-67")
+    full_clients = [client1, client_json, client_csv]
+    clientsShorts = [ClientMapper.short_version(client1), ClientMapper.short_version(client_json), ClientMapper.short_version(client_csv)]
+
+    for i in clientsShorts:
+        print(i)
