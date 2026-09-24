@@ -143,7 +143,11 @@ class Client:
 
 class ClientMapper:
     @staticmethod
+<<<<<<< HEAD
     def short_version(client) -> ClientShort:
+=======
+    def short_version(client) -> Client:
+>>>>>>> c831447ef2e29e4b961dd9afadeb429237c25559
             return ClientShort(client.last_name, f"{client.first_name[0]}.", client.phone_number)
 
 if __name__ == "__main__":
@@ -168,3 +172,7 @@ if __name__ == "__main__":
 
     for i in clientsShorts:
         print(i)
+<<<<<<< HEAD
+=======
+
+>>>>>>> c831447ef2e29e4b961dd9afadeb429237c25559
