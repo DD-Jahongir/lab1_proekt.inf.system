@@ -2,25 +2,33 @@ from abc import ABC, abstractmethod
 from client_rep_db import Client_rep_DB
 from client import Client
 
+
 class ClientRepositoryBase(ABC):
     """Абстрактный базовый класс, задающий общий интерфейс для всех репозиториев."""
+
     @abstractmethod
-    def get_by_id(self, client_id: int) -> Client: pass
-    
+    def get_by_id(self, client_id: int) -> Client:
+        pass
+
     @abstractmethod
-    def get_k_n_short_list(self, k: int, n: int) -> list: pass
-    
+    def get_k_n_short_list(self, k: int, n: int) -> list:
+        pass
+
     @abstractmethod
-    def add(self, client: Client): pass
-    
+    def add(self, client: Client):
+        pass
+
     @abstractmethod
-    def update(self, client_id: int, new_client: Client): pass
-    
+    def update(self, client_id: int, new_client: Client):
+        pass
+
     @abstractmethod
-    def delete(self, client_id: int): pass
-    
+    def delete(self, client_id: int):
+        pass
+
     @abstractmethod
-    def get_count(self) -> int: pass
+    def get_count(self) -> int:
+        pass
 
 
 class Client_rep_DB_Adapter(ClientRepositoryBase):

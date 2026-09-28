@@ -3,6 +3,7 @@ from client_rep_json import Client_rep_json
 from client_rep_yaml import Client_rep_yaml
 import os
 
+
 def run_tests(repo, file_name):
     print(f"Тестирование:{repo.__class__.__name__}")
 
@@ -14,7 +15,7 @@ def run_tests(repo, file_name):
     repo.add(Client(1, "Яковлев", "Яков", "1111 222222", "9991112233"))
     repo.add(Client(1, "Иванов", "Иван", "3333 444444", "9995556677"))
     repo.add(Client(1, "Алексеев", "Алексей", "5555 666666", "8880001122"))
-    
+
     print(f"2. Количество элементов в памяти: {repo.get_count()}")
 
     print("\n3. Сортировка по фамилии:")
@@ -42,8 +43,8 @@ def run_tests(repo, file_name):
 
     print(f"\n8. Сохранение данных в {file_name} и повторное чтение...")
     repo.write_to_file()
-    
-    repo.clients = [] 
+
+    repo.clients = []
     repo.read_from_file()
     print(f"   - Успешно прочитано элементов из файла: {repo.get_count()}")
     for c in repo.clients:

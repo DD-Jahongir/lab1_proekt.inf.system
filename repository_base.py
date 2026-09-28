@@ -1,5 +1,6 @@
 from client import Client, ClientMapper
 
+
 class ClientRepositoryBase:
     def __init__(self):
         self.clients = []

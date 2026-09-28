@@ -1,6 +1,7 @@
 from client_rep_adapter import ClientRepositoryBase
 from client import Client
 
+
 class ClientRepositoryDecorator(ClientRepositoryBase):
     def __init__(self, wrapped_repo: ClientRepositoryBase):
         self._wrapped = wrapped_repo
@@ -26,7 +27,9 @@ class ClientRepositoryDecorator(ClientRepositoryBase):
 
 class ClientRepositoryLogger(ClientRepositoryDecorator):
     def add(self, client: Client):
-        print(f"[ЛОГ] Начинается добавление клиента: {client.last_name} {client.first_name}")
+        print(
+            f"[ЛОГ] Начинается добавление клиента: {client.last_name} {client.first_name}"
+        )
         super().add(client)
         print("[ЛОГ] Клиент успешно добавлен в систему.")
 
